@@ -13,29 +13,32 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import java.io.ByteArrayInputStream
 import org.apache.poi.hssf.usermodel.HSSFCell
 import org.apache.poi.hssf.usermodel.HSSFCellStyle
+import com.rock.stock.util.CSVUtil
+import java.io.StringReader
+import com.rock.stock.eneity.BalanceSheet
 
 /**
  * @author rock
  */
-class Net163FinanceDataService extends FinanceDataService {
+
+
+/**
+ * @author rock
+ */
+class Net163FinanceDataService(symbol:String, reportType:String, `type`:String) extends FinanceDataService(symbol, reportType, `type`)  {
+    //val symbol = "002230"
+  val exportFile = "D:/a/f.html"
+ // val reportType = "zcfzb" // zycwzb(主要财务指标), zcfzb(资产负债表), lrb(利润表), xjllb(现金流量表)
+//  val `type` = "year" // year, season or report
+
+  
+  
   override def getBalanceSheet: BalanceSheet = {
-     val url = "" //s"http://quotes.money.163.com/cjmx/$year/$d/0$symbol.xls"
-     val excel = Http(url).option(HttpOptions.connTimeout(111000)).option(HttpOptions.readTimeout(511000)).asBytes
-    val book = new HSSFWorkbook(new ByteArrayInputStream(excel.body))
-    val sheet = book.getSheetAt(0)
-    val rows = sheet.getPhysicalNumberOfRows();
-    val data = for (rowIndex <- 0 until rows) yield {
-      val row = sheet.getRow(rowIndex)
-      val colNum = row.getPhysicalNumberOfCells()
-      for (colIndex <- 0 until colNum) yield {
-        val cell = row.getCell(colIndex)
-        cell.getCellType() match {
-          case Cell.CELL_TYPE_NUMERIC => cell.getNumericCellValue() + ""
-          case _ => cell.getStringCellValue()
-        }
-      }
-    }
-    null
+     val url = s"http://quotes.money.163.com/service/${reportType}_$symbol.html?type=${`type`}" //year season report
+     val csv = Http(url).option(HttpOptions.connTimeout(111000)).option(HttpOptions.readTimeout(511000)).asBytes
+     val data = CSVUtil.readCSV(new StringReader(new String(csv.body, "gb2312")))
+     data.foreach { println  }
+     return new BalanceSheet(data)
   }
   override def getCashFlowStatement: CashFlowStatement = null
   override def getIncomeStatement: IncomeStatment = null

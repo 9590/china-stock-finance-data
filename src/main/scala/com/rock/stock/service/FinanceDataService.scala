@@ -7,7 +7,7 @@ import com.rock.stock.eneity.IncomeStatment
 /**
  * @author rock
  */
-trait FinanceDataService {
+abstract class FinanceDataService(symbol:String, reportType:String, `type`:String) {
     def getBalanceSheet:BalanceSheet
     def getCashFlowStatement:CashFlowStatement
     def getIncomeStatement:IncomeStatment
