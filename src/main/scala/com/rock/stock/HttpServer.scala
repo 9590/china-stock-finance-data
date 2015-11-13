@@ -15,10 +15,10 @@ import java.util.Date
  */
 object HttpServer extends Logger with App {
   val port = 9999
-  val actorSystem = ActorSystem("HelloExampleActorSystem")
+  val actorSystem = ActorSystem("stock-finance")
   val routes = Routes({
     case GET(request) => {
-      actorSystem.actorOf(Props[HelloHandler]) ! request
+      actorSystem.actorOf(Props[StockDataHandler]) ! request
     }
   })
   val webServer = new WebServer(WebServerConfig(port = port), routes, actorSystem)
@@ -34,17 +34,24 @@ object HttpServer extends Logger with App {
 /**
  * Hello processor writes a greeting and stops.
  */
-class HelloHandler extends Actor {
+class StockDataHandler extends Actor {
   def receive = {
     case event: HttpRequestEvent =>
       println("process request ...")
       event.response.write("hello world")
+      handle(event)
       context.stop(self)
   }
 
-//  val path = event.endPoint.path
-//  path match {
-//    case "/" => readFile(path)
-//    case _ => ""
-//  }
+  def handle(event: HttpRequestEvent) {
+    val path = event.endPoint.path
+    path match {
+      case "/" => readFile(path)
+      case _ => ""
+    }
+  }
+  
+  private def readFile(path:String){
+    
+  }
 }

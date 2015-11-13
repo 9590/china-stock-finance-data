@@ -1,21 +1,15 @@
 package com.rock.stock.service
-import com.rock.stock.eneity.BalanceSheet
-import com.rock.stock.eneity.CashFlowStatement
-import com.rock.stock.eneity.IncomeStatment
+import com.rock.stock.model._
 import scalaj.http.Http
 import scalaj.http.HttpOptions
 import com.github.tototoshi.csv.CSVReader
 import java.io.FileOutputStream
 import java.util.Date
 import java.text.SimpleDateFormat
-import org.apache.poi.ss.usermodel._
-import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import java.io.ByteArrayInputStream
-import org.apache.poi.hssf.usermodel.HSSFCell
-import org.apache.poi.hssf.usermodel.HSSFCellStyle
 import com.rock.stock.util.CSVUtil
 import java.io.StringReader
-import com.rock.stock.eneity.BalanceSheet
+import com.rock.stock.model.ReportType
 
 /**
  * @author rock
@@ -25,7 +19,7 @@ import com.rock.stock.eneity.BalanceSheet
 /**
  * @author rock
  */
-class Net163FinanceDataService(symbol:String, reportType:String, `type`:String) extends FinanceDataService(symbol, reportType, `type`)  {
+class Net163FinanceDataService(symbol:String, reportType:String, `type`:ReportType) extends FinanceDataService(symbol, reportType, `type`)  {
     //val symbol = "002230"
   val exportFile = "D:/a/f.html"
  // val reportType = "zcfzb" // zycwzb(主要财务指标), zcfzb(资产负债表), lrb(利润表), xjllb(现金流量表)
@@ -40,6 +34,6 @@ class Net163FinanceDataService(symbol:String, reportType:String, `type`:String) 
      data.foreach { println  }
      return new BalanceSheet(data)
   }
-  override def getCashFlowStatement: CashFlowStatement = null
-  override def getIncomeStatement: IncomeStatment = null
+  override def getCashFlowStatement: CashFlowStatement = ???
+  override def getIncomeStatement: IncomeStatment = ???
 }
