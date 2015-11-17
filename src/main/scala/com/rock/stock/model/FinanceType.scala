@@ -1,8 +1,11 @@
 package com.rock.stock.model
 
-sealed trait FinanceType 
+/**
+ * @author rock
+ */
+sealed trait FinanceType
 object FinanceType {
-  def fromString(str: String): Option[FinanceType] = {
+  def apply(str: String) = {
     str match {
       case "zycwzb" => Some(main_financial_metric)
       case "zcfzb" => Some(balance_sheet)
