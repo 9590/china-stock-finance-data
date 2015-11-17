@@ -4,12 +4,12 @@ import org.mashupbots.socko.routes._
 import org.mashupbots.socko.infrastructure.Logger
 import org.mashupbots.socko.webserver.WebServer
 import org.mashupbots.socko.webserver.WebServerConfig
-
 import akka.actor.ActorSystem
 import akka.actor.Props
 import org.mashupbots.socko.events.HttpRequestEvent
 import akka.actor.Actor
 import java.util.Date
+import java.io.File
 /**
  * @author rock
  */
@@ -35,6 +35,7 @@ object HttpServer extends Logger with App {
  * Hello processor writes a greeting and stops.
  */
 class StockDataHandler extends Actor {
+  val rootPath = classOf[StockDataHandler].getResource("/")
   def receive = {
     case event: HttpRequestEvent =>
       println("process request ...")
@@ -45,6 +46,7 @@ class StockDataHandler extends Actor {
 
   def handle(event: HttpRequestEvent) {
     val path = event.endPoint.path
+    println("path:"+path)
     path match {
       case "/" => readFile(path)
       case _ => ""
@@ -52,6 +54,10 @@ class StockDataHandler extends Actor {
   }
   
   private def readFile(path:String){
+    scala.io.Source.fromFile(new File("")).mkString
+  }
+  
+  private def handleStaticFile(){
     
   }
 }
