@@ -3,7 +3,7 @@ package com.rock.stock
 import com.rock.stock.service.Net163FinanceDataService
 import com.rock.stock.model.year
 import com.rock.stock.model.FinanceType
-import com.rock.stock.model.RequestPath
+
 
 /**
  * @author rock
@@ -29,11 +29,7 @@ object TestApp extends App {
   //    case _ => println("nothing matched")
   //  }
 
-  RequestPath("/zDycwzb/year2") match {
-    case RequestPath(financeData) => println(financeData)
-     
-  }
- 
+
 }
 
 object Square {
