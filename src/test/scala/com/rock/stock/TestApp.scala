@@ -3,6 +3,7 @@ package com.rock.stock
 import com.rock.stock.service.Net163FinanceDataService
 import com.rock.stock.model.year
 import com.rock.stock.model.FinanceType
+import com.rock.stock.model.RequestPath
 
 /**
  * @author rock
@@ -21,12 +22,18 @@ object TestApp extends App {
   //      println(list.size())
   //    }
 
-  System.out.println(FinanceType.fromString("zycwz+b"))
-  val number: Double = 5.01
-  number match {
-    case Square(n) => println(s"square root of $number is $n")
-    case _ => println("nothing matched")
+  //  System.out.println(FinanceType.fromString("zycwz+b"))
+  //  val number: Double = 5.01
+  //  number match {
+  //    case Square(n) => println(s"square root of $number is $n")
+  //    case _ => println("nothing matched")
+  //  }
+
+  RequestPath("/zDycwzb/year2") match {
+    case RequestPath(financeData) => println(financeData)
+     
   }
+ 
 }
 
 object Square {
