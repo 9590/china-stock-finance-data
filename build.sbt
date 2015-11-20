@@ -20,7 +20,8 @@ libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.1.2"
 
 libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.0"
 
+libraryDependencies += "com.fasterxml.jackson.core" %  "jackson-core" % "2.5.2"
 
- 
+libraryDependencies += "com.fasterxml.jackson.core" %  "jackson-databind" % "2.5.2"
 
- 
+libraryDependencies += "commons-io" % "commons-io" % "2.4"

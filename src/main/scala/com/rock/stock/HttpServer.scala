@@ -10,6 +10,12 @@ import org.mashupbots.socko.events.HttpRequestEvent
 import akka.actor.Actor
 import java.util.Date
 import java.io.File
+import com.rock.stock.model.resource.Resource
+import com.rock.stock.model.resource.StockFinanceResource
+import com.rock.stock.model.resource.FileResource
+import com.rock.stock.model.resource.NotExistResource
+import com.rock.stock.service.Net163FinanceDataService
+import com.rock.stock.handler.WebHandler
 /**
  * @author rock
  */
@@ -18,7 +24,7 @@ object HttpServer extends Logger with App {
   val actorSystem = ActorSystem("stock-finance")
   val routes = Routes({
     case GET(request) => {
-      actorSystem.actorOf(Props[StockDataHandler]) ! request
+      actorSystem.actorOf(Props[WebHandler]) ! request
     }
   })
   val webServer = new WebServer(WebServerConfig(port = port), routes, actorSystem)
@@ -29,35 +35,4 @@ object HttpServer extends Logger with App {
   })
 
   System.out.println(s"Open your browser and navigate to http://localhost:$port")
-}
-
-/**
- * Hello processor writes a greeting and stops.
- */
-class StockDataHandler extends Actor {
-  val rootPath = classOf[StockDataHandler].getResource("/")
-  def receive = {
-    case event: HttpRequestEvent =>
-      println("process request ...")
-      event.response.write("hello world")
-      handle(event)
-      context.stop(self)
-  }
-
-  def handle(event: HttpRequestEvent) {
-    val path = event.endPoint.path
-    println("path:"+path)
-    path match {
-      case "/" => readFile(path)
-      case _ => ""
-    }
-  }
-  
-  private def readFile(path:String){
-    scala.io.Source.fromFile(new File("")).mkString
-  }
-  
-  private def handleStaticFile(){
-    
-  }
 }

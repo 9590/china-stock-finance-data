@@ -13,6 +13,6 @@ import com.rock.stock.model.resource.StockFinanceResource
 abstract class FinanceDataService(resource:StockFinanceResource) {
  
   
-  def getFinanceData = ???
+  def getFinanceData:Seq[Seq[String]] = ???
 }
  

@@ -1,36 +1,138 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="gb2312">
 <title>Insert title here</title>
+<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="jquery-1.11.2.min.js"></script>
+
+<link href="bootstrap/css/bootstrap.css" rel="stylesheet"
+	type="text/css" />
+<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet"
+	type="text/css" />
+<style>
+th, td {
+	text-align: left;
+	padding-right: 15px;
+}
+h5{
+	display:inline-block;
+}
+select{
+	display:inline-block;
+	margin-left: 30px;
+}
+</style>
+<script>
+	symbol = "600000";
+	FinanceType = {
+		"zycwzb" : {
+			"id" : "zycwzb",
+			"name" : "Ö÷Òª²ÆÎñÖ¸±ê"
+		},
+		"zcfzb" : {
+			"id" : "zcfzb",
+			"name" : "×Ê²ú¸ºÕ®±í"
+		},
+		"lrb" : {
+			"id" : "lrb",
+			"name" : "ÀûÈó±í"
+		},
+		"xjllb" : {
+			"id" : "xjllb",
+			"name" : "ÏÖ½ğÁ÷Á¿±í"
+		}
+	};
+
+	ReportType = {
+		"year" : {
+			"id" : "year",
+			"name" : "Äê±¨"
+		},
+		"season" : {
+			"id" : "season",
+			"name" : "¼¾±¨"
+		},
+		"report" : {
+			"id" : "report",
+			"name" : "±¨¸æÆÚ"
+		}
+	};
+</script>
 </head>
 <body>
-	<table class="table">
-		<caption>åŸºæœ¬çš„è¡¨æ ¼å¸ƒå±€</caption>
-		<thead>
-			<tr>
-				<th>åç§°</th>
-				<th>åŸå¸‚</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>Tanmay</td>
-				<td>Bangalore</td>
-			</tr>
-			<tr>
-				<td>Sachin</td>
-				<td>Mumbai</td>
-			</tr>
-		</tbody>
-	</table>
+	<div>
+		<h5></h5>
+		<select class="finance-type">
+			
+		</select>
+		<select class="report-type">
+			
+		</select>
+		<table class="table">
+			<thead>
+				<tr>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
 
 </body>
 
 <script type="text/javascript">
-//zycwzb(ä¸»è¦è´¢åŠ¡æŒ‡æ ‡), zcfzb(èµ„äº§è´Ÿå€ºè¡¨), lrb(åˆ©æ¶¦è¡¨), xjllb(ç°é‡‘æµé‡è¡¨)
-	function create
+	$("h5").text(symbol);
+			
+	
+	$("select.finance-type").append('<option id="'+FinanceType.zycwzb.id+'">'+FinanceType.zycwzb.name+'</option>');
+	$("select.finance-type").append('<option id="'+FinanceType.zcfzb.id+'">'+FinanceType.zcfzb.name+'</option>');
+	$("select.finance-type").append('<option id="'+FinanceType.lrb.id+'">'+FinanceType.lrb.name+'</option>');
+	$("select.finance-type").append('<option id="'+FinanceType.xjllb.id+'">'+FinanceType.xjllb.name+'</option>');
+	 
+	$("select.report-type").append('<option id="'+ReportType.year.id+'">'+ReportType.year.name+'</option>');
+	$("select.report-type").append('<option id="'+ReportType.season.id+'">'+ReportType.season.name+'</option>');
+	$("select.report-type").append('<option id="'+ReportType.report.id+'">'+ReportType.report.name+'</option>');
 
+	
+	//zycwzb(Ö÷Òª²ÆÎñÖ¸±ê), zcfzb(×Ê²ú¸ºÕ®±í), lrb(ÀûÈó±í), xjllb(ÏÖ½ğÁ÷Á¿±í)
+	var reportType = ReportType.year.id;
+	var financeType = FinanceType.zcfzb.id;
+	var symbol = "600000";
+	$.ajax({
+		"url" : symbol + "/" + financeType + "/" + reportType,
+		dataType : "json",
+		success : function(data) {
+			fillStockData(data);
+		}
+	});
+
+	 
+</script>
+<script>
+	function fillStockData(data){
+		var headRowData = data[0];
+		var firstRow = $("table thead tr");
+		firstRow.empty();
+		for (var i = 0; i < headRowData.length; i++) {
+			var th = $("<th nowrap='nowrap'></th>");
+			th.text(headRowData[i]);
+			firstRow.append(th);
+		}
+
+		var tbody = $("table tbody");
+		tbody.empty();
+		for (var i = 1; i < data.length; i++) {
+			var row = $("<tr></tr>")
+			var cols = data[i];
+			for (var j = 0; j < cols.length; j++) {
+				var td = $("<td nowrap='nowrap'></td>");
+				td.text(cols[j]);
+				row.append(td);
+			}
+			tbody.append(row);
+		}
+	}
 
 </script>
 </html>
