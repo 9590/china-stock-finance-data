@@ -115,14 +115,20 @@ select {
 	
     reportType = ReportType.year;
     financeType = FinanceType.zcfzb;
-	var symbol = "600000";
-	$.ajax({
-		"url" : symbol + "/" + financeType.id + "/" + reportType.id,
-		dataType : "json",
-		success : function(data) {
-			fillStockData(data);
-		}
-	});
+	symbol = "600000";
+	
+	function loadStockFinanceData(){
+		$.ajax({
+			"url" : symbol + "/" + financeType.id + "/" + reportType.id,
+			dataType : "json",
+			success : function(data) {
+				fillStockData(data);
+			}
+		});
+	}
+	
+	loadStockFinanceData();
+	
 </script>
 <script>
 	function fillStockData(data) {
@@ -150,8 +156,11 @@ select {
 	}
 	function bindEvent(){
 		$(".stock-filter").on("change", "select.finance-type, select.report-type", function(){
-			console.log($("select.finance-type").find("option:selected").text());
-			console.log($("select.report-type").find("option:selected").text());
+			var financeTypeId = $("select.finance-type").find("option:selected").attr("id");
+			var reportTypeId = $("select.report-type").find("option:selected").attr("id");
+			reportType = ReportType[reportTypeId];
+			financeType = FinanceType[financeTypeId];
+			loadStockFinanceData();
 		});
 		 
 	}
