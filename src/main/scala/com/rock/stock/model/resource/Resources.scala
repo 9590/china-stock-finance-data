@@ -7,7 +7,7 @@ case class FileResource(path: String) extends Resource
 case object NotExistResource extends Resource
 case class StockFinanceResource(symbol: String, financeType: FinanceType, reportType: ReportType) extends Resource
 
-object Resource extends App {
+object Resource {
 
   class FinanceString(str: String) {
     def toFinanceType = FinanceType(str)
@@ -28,13 +28,13 @@ object Resource extends App {
   def getRealFilePath(path: String) = {
     path match {
       case "/" => classOf[Resource].getResource("/").getPath + "web/index.html"
-      case _ =>  classOf[Resource].getResource("/").getPath + "web" + path
+      case _ => classOf[Resource].getResource("/").getPath + "web" + path
     }
-   
+
   }
   private def isAFile(path: String) = {
     val file = new File(path)
     file.exists() && file.isFile()
   }
-  println(Resource("/bootstrap/js/bootstrap.js"))
+
 }

@@ -15,12 +15,17 @@ th, td {
 	text-align: left;
 	padding-right: 15px;
 }
-h5{
-	display:inline-block;
+
+h5 {
+	display: inline-block;
 }
-select{
-	display:inline-block;
+
+select {
+	display: inline-block;
 	margin-left: 30px;
+}
+.stock-filter{
+	display: inline-block;
 }
 </style>
 <script>
@@ -62,13 +67,12 @@ select{
 </head>
 <body>
 	<div>
+
 		<h5></h5>
-		<select class="finance-type">
-			
-		</select>
-		<select class="report-type">
-			
-		</select>
+		<div class="stock-filter">
+		<select class="finance-type"></select>
+		 <select class="report-type"></select>
+		</div>
 		<table class="table">
 			<thead>
 				<tr>
@@ -83,34 +87,45 @@ select{
 
 <script type="text/javascript">
 	$("h5").text(symbol);
-			
 	
-	$("select.finance-type").append('<option id="'+FinanceType.zycwzb.id+'">'+FinanceType.zycwzb.name+'</option>');
-	$("select.finance-type").append('<option id="'+FinanceType.zcfzb.id+'">'+FinanceType.zcfzb.name+'</option>');
-	$("select.finance-type").append('<option id="'+FinanceType.lrb.id+'">'+FinanceType.lrb.name+'</option>');
-	$("select.finance-type").append('<option id="'+FinanceType.xjllb.id+'">'+FinanceType.xjllb.name+'</option>');
-	 
-	$("select.report-type").append('<option id="'+ReportType.year.id+'">'+ReportType.year.name+'</option>');
-	$("select.report-type").append('<option id="'+ReportType.season.id+'">'+ReportType.season.name+'</option>');
-	$("select.report-type").append('<option id="'+ReportType.report.id+'">'+ReportType.report.name+'</option>');
+	$("select.finance-type").append(
+			'<option id="'+FinanceType.zycwzb.id+'">' + FinanceType.zycwzb.name
+					+ '</option>');
+	$("select.finance-type").append(
+			'<option id="'+FinanceType.zcfzb.id+'">' + FinanceType.zcfzb.name
+					+ '</option>');
+	$("select.finance-type").append(
+			'<option id="'+FinanceType.lrb.id+'">' + FinanceType.lrb.name
+					+ '</option>');
+	$("select.finance-type").append(
+			'<option id="'+FinanceType.xjllb.id+'">' + FinanceType.xjllb.name
+					+ '</option>');
 
-	
+	$("select.report-type").append(
+			'<option id="'+ReportType.year.id+'">' + ReportType.year.name
+					+ '</option>');
+	$("select.report-type").append(
+			'<option id="'+ReportType.season.id+'">' + ReportType.season.name
+					+ '</option>');
+	$("select.report-type").append(
+			'<option id="'+ReportType.report.id+'">' + ReportType.report.name
+					+ '</option>');
+
 	//zycwzb(主要财务指标), zcfzb(资产负债表), lrb(利润表), xjllb(现金流量表)
-	var reportType = ReportType.year.id;
-	var financeType = FinanceType.zcfzb.id;
+	
+    reportType = ReportType.year;
+    financeType = FinanceType.zcfzb;
 	var symbol = "600000";
 	$.ajax({
-		"url" : symbol + "/" + financeType + "/" + reportType,
+		"url" : symbol + "/" + financeType.id + "/" + reportType.id,
 		dataType : "json",
 		success : function(data) {
 			fillStockData(data);
 		}
 	});
-
-	 
 </script>
 <script>
-	function fillStockData(data){
+	function fillStockData(data) {
 		var headRowData = data[0];
 		var firstRow = $("table thead tr");
 		firstRow.empty();
@@ -133,6 +148,13 @@ select{
 			tbody.append(row);
 		}
 	}
-
+	function bindEvent(){
+		$(".stock-filter").on("change", "select.finance-type, select.report-type", function(){
+			console.log($("select.finance-type").find("option:selected").text());
+			console.log($("select.report-type").find("option:selected").text());
+		});
+		 
+	}
+	bindEvent();
 </script>
 </html>
