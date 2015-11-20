@@ -13,37 +13,39 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.commons.io.IOUtils
 import java.io.FileInputStream
 import org.mashupbots.socko.events.HttpResponseStatus
+import com.rock.stock.model.http.TextHtmlContentType
+import com.rock.stock.model.http.JsonContentType
+import com.rock.stock.model.http.ContentType
 class WebHandler extends Actor {
- //http://quotes.money.163.com/stocksearch/json.do?type=&count=10&word=zgpa&t=0.4874892747054357
+  //http://quotes.money.163.com/stocksearch/json.do?type=&count=10&word=zgpa&t=0.4874892747054357
   //_ntes_stocksearch_callback([{"type":"SH","symbol":"601318","tag":"HS MYHS","spell":"ZGPA","name":"\u4e2d
-//\u56fd\u5e73\u5b89"},{"type":"HK","symbol":"02318","tag":"HK","spell":"ZGPA","name":"\u4e2d\u56fd\u5e73
-//\u5b89"}])
+  //\u56fd\u5e73\u5b89"},{"type":"HK","symbol":"02318","tag":"HK","spell":"ZGPA","name":"\u4e2d\u56fd\u5e73
+  //\u5b89"}])
   def receive = {
     case event: HttpRequestEvent =>
       handle(event)
       context.stop(self)
   }
-
-  def handle(event: HttpRequestEvent)  = {
+  def handle(event: HttpRequestEvent) = {
     val path = event.endPoint.path
     println("request path:" + path);
     val res = Resource(path) match {
       case StockFinanceResource(symbol, financeType, reportType) =>
-        val stockData = new Net163FinanceDataService(StockFinanceResource(symbol, financeType, reportType)).getFinanceData
+        val stockData = (new Net163FinanceDataService(StockFinanceResource(symbol, financeType, reportType))).getFinanceData
         val jsonObj = asJavaCollection(stockData.map { stockDataRow => asJavaCollection(stockDataRow) })
         val om = new ObjectMapper
-        (200, om.writeValueAsString(jsonObj), Some("application/json;charset=gb2312"))
-      case FileResource(fileName) => (200, readFile(fileName), Some("text/html; charset=gb2312"))
-      case NotExistResource => (404, "404 not found", None)
+        (200, om.writeValueAsString(jsonObj).getBytes, Some(JsonContentType("gb2312")))
+      case FileResource(fileName) => (200, readFile(fileName), Some(TextHtmlContentType("gb2312")))
+      case NotExistResource => (404, "404 not found".getBytes, None)
     }
-    res._3.foreach { contentType => event.response.headers.append("Content-Type", contentType) }
+    res._3.foreach { contentType => event.response.headers.append("Content-Type", contentType.toString) }
     event.response.status = new HttpResponseStatus(res._1)
     event.response.write(res._2)
   }
 
   private def readFile(path: String) = {
     val input = new FileInputStream(path)
-    val data = IOUtils.toString(input)
+    val data = IOUtils.toByteArray(input)
     input.close()
     data
   }
