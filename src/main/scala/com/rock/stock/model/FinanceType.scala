@@ -15,7 +15,7 @@ object FinanceType {
     }
   }
 }
-//zycwzb(主要财务指标), zcfzb(资产负债表), lrb(利润表), xjllb(现金流量表)
+ 
 case object main_financial_metric extends FinanceType {
   override def toString = "zycwzb"
 }

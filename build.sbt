@@ -2,11 +2,17 @@ name := "china-stock-finance-data"
 
 scalaVersion := "2.11.2"
 
+ivyScala := ivyScala.value map {
+  _.copy(overrideScalaVersion = true)
+}
+
 EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
 
 resolvers += "codahale" at "http://repo.codahale.com"
 
 resolvers += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
+
+resolvers += "spray repo" at "http://repo.spray.io"
 
 libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.3.11"
 
@@ -20,8 +26,12 @@ libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.1.2"
 
 libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.0"
 
-libraryDependencies += "com.fasterxml.jackson.core" %  "jackson-core" % "2.5.2"
-
-libraryDependencies += "com.fasterxml.jackson.core" %  "jackson-databind" % "2.5.2"
 
 libraryDependencies += "commons-io" % "commons-io" % "2.4"
+
+libraryDependencies += "io.spray" % "spray-json_2.11" % "1.3.2"
+
+libraryDependencies += "org.json4s" % "json4s-jackson_2.10" % "3.3.0"
+
+
+

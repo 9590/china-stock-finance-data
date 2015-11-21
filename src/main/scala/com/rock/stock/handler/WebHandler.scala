@@ -9,13 +9,16 @@ import com.rock.stock.model.resource.Resource
 import java.io.File
 import akka.actor.Actor
 import scala.collection.JavaConversions.asJavaCollection
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.commons.io.IOUtils
 import java.io.FileInputStream
 import org.mashupbots.socko.events.HttpResponseStatus
 import com.rock.stock.model.http.TextHtmlContentType
 import com.rock.stock.model.http.JsonContentType
 import com.rock.stock.model.http.ContentType
+import com.rock.stock.util.JsonUtil
+import com.rock.stock.model.resource.StockSearchResource
+import com.rock.stock.service.Net163StockSearchService
+import com.rock.stock.model.http.JsonContentType
 class WebHandler extends Actor {
   //http://quotes.money.163.com/stocksearch/json.do?type=&count=10&word=zgpa&t=0.4874892747054357
   //_ntes_stocksearch_callback([{"type":"SH","symbol":"601318","tag":"HS MYHS","spell":"ZGPA","name":"\u4e2d
@@ -28,13 +31,16 @@ class WebHandler extends Actor {
   }
   def handle(event: HttpRequestEvent) = {
     val path = event.endPoint.path
+    val params = event.request.endPoint.queryStringMap
     println("request path:" + path);
-    val res = Resource(path) match {
+    val res = Resource(path, params) match {
       case StockFinanceResource(symbol, financeType, reportType) =>
         val stockData = (new Net163FinanceDataService(StockFinanceResource(symbol, financeType, reportType))).getFinanceData
-        val jsonObj = asJavaCollection(stockData.map { stockDataRow => asJavaCollection(stockDataRow) })
-        val om = new ObjectMapper
-        (200, om.writeValueAsString(jsonObj).getBytes, Some(JsonContentType("gb2312")))
+        (200, JsonUtil.toJson(stockData).getBytes, Some(JsonContentType("gb2312")))
+      
+      case StockSearchResource(word) =>
+        val searchs = new Net163StockSearchService().search(word)
+        (200, JsonUtil.toJson(searchs).getBytes, Some(JsonContentType("gb2312")))
       case FileResource(fileName) => (200, readFile(fileName), Some(TextHtmlContentType("gb2312")))
       case NotExistResource => (404, "404 not found".getBytes, None)
     }
