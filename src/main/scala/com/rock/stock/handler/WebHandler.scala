@@ -19,6 +19,9 @@ import com.rock.stock.util.JsonUtil
 import com.rock.stock.model.resource.StockSearchResource
 import com.rock.stock.service.Net163StockSearchService
 import com.rock.stock.model.http.JsonContentType
+import spray.json._
+//import DefaultJsonProtocol._
+import com.rock.stock.json.JsonProtocol._
 class WebHandler extends Actor {
   //http://quotes.money.163.com/stocksearch/json.do?type=&count=10&word=zgpa&t=0.4874892747054357
   //_ntes_stocksearch_callback([{"type":"SH","symbol":"601318","tag":"HS MYHS","spell":"ZGPA","name":"\u4e2d
@@ -36,11 +39,11 @@ class WebHandler extends Actor {
     val res = Resource(path, params) match {
       case StockFinanceResource(symbol, financeType, reportType) =>
         val stockData = (new Net163FinanceDataService(StockFinanceResource(symbol, financeType, reportType))).getFinanceData
-        (200, JsonUtil.toJson(stockData).getBytes, Some(JsonContentType("gb2312")))
+        (200, stockData.toJson.toString.getBytes, Some(JsonContentType("gb2312")))
       
       case StockSearchResource(word) =>
         val searchs = new Net163StockSearchService().search(word)
-        (200, JsonUtil.toJson(searchs).getBytes, Some(JsonContentType("gb2312")))
+        (200, searchs.toJson.toString.getBytes, Some(JsonContentType("gb2312")))
       case FileResource(fileName) => (200, readFile(fileName), Some(TextHtmlContentType("gb2312")))
       case NotExistResource => (404, "404 not found".getBytes, None)
     }

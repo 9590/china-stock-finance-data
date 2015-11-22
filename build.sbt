@@ -31,7 +31,6 @@ libraryDependencies += "commons-io" % "commons-io" % "2.4"
 
 libraryDependencies += "io.spray" % "spray-json_2.11" % "1.3.2"
 
-libraryDependencies += "org.json4s" % "json4s-jackson_2.10" % "3.3.0"
 
 
 

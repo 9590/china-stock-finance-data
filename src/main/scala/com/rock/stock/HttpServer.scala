@@ -22,11 +22,11 @@ import com.rock.stock.handler.WebHandler
 object HttpServer extends Logger with App {
   val port = 9999
   val actorSystem = ActorSystem("stock-finance")
-  val routes = Routes({
+  val routes = Routes{
     case GET(request) => {
       actorSystem.actorOf(Props[WebHandler]) ! request
     }
-  })
+  }
   val webServer = new WebServer(WebServerConfig(port = port), routes, actorSystem)
   webServer.start()
 
