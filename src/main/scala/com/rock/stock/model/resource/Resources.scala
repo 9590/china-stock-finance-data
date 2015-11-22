@@ -3,10 +3,27 @@ package com.rock.stock.model.resource
 import com.rock.stock.model._
 import java.io.File
 import com.sun.corba.se.impl.protocol.NotExistent
+import com.rock.stock.model.http.ContentType
+import com.rock.stock.model.http.JsonContentType
+import com.rock.stock.model.http.TextHtmlContentType
+import com.rock.stock.model.http.TextCssContentType
+import com.rock.stock.model.http.TextHtmlContentType
+import com.rock.stock.model.http.JavascriptContentType
 
 sealed abstract class Resource
 
-case class FileResource(path: String) extends Resource
+case class FileResource(path: String) extends Resource {
+  def contentType = {
+    path match {
+      case path if path.endsWith(".json") => Some(JsonContentType("utf-8"))
+      case path if path.endsWith(".js") => Some(JavascriptContentType())
+      case path if path.endsWith(".css") => Some(TextCssContentType())
+      case path if path.endsWith(".html") => Some(TextHtmlContentType("utf-8"))
+      case path if path.endsWith(".htm") => Some(TextHtmlContentType("utf-8"))
+      case _ => None
+    }
+  }
+}
 
 case object NotExistResource extends Resource
 
@@ -42,9 +59,11 @@ object Resource {
   }
 
   def getRealFilePath(path: String) = {
+    var rootPath = classOf[Resource].getResource("/").getPath
+    rootPath = "E:/program_data/workspace/github_rep/china-stock-finance-data/src/main/resources/"
     path match {
-      case path if path == "/" || path.startsWith("/?") => classOf[Resource].getResource("/").getPath + "web/index.html"
-      case _ => classOf[Resource].getResource("/").getPath + "web" + path
+      case path if path == "/" || path.startsWith("/?") => rootPath + "web/index.html"
+      case _ => rootPath + "web" + path
     }
 
   }

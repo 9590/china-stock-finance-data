@@ -44,7 +44,7 @@ class WebHandler extends Actor {
       case StockSearchResource(word) =>
         val searchs = new Net163StockSearchService().search(word)
         (200, searchs.toJson.toString.getBytes, Some(JsonContentType("gb2312")))
-      case FileResource(fileName) => (200, readFile(fileName), Some(TextHtmlContentType("gb2312")))
+      case FileResource(fileName) => (200, readFile(fileName), FileResource(fileName).contentType)
       case NotExistResource => (404, "404 not found".getBytes, None)
     }
     res._3.foreach { contentType => event.response.headers.append("Content-Type", contentType.toString) }

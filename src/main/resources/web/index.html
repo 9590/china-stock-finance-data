@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="gb2312">
-<title>Insert title here</title>
-<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+<meta charset="utf-8">
+<title>ç‚’è‚¡å¿…çœ‹~~~</title>
 <script type="text/javascript" src="jquery-1.11.2.min.js"></script>
-
-<link href="bootstrap/css/bootstrap.css" rel="stylesheet"
-	type="text/css" />
-<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet"
-	type="text/css" />
+<script type="text/javascript" src="data.js"></script>
+<script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
+<link href="bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" />
+<link href="bootstrap/css/bootstrap.theme.css" rel="stylesheet" type="text/css" />
 <style>
 th, td {
 	text-align: left;
@@ -27,48 +25,31 @@ select {
 .stock-filter{
 	display: inline-block;
 }
+.container{
+	margin:10px;
+}
+.stock-search{
+	display:none;
+}
 </style>
 <script>
-	symbol = "600000";
-	FinanceType = {
-		"zycwzb" : {
-			"id" : "zycwzb",
-			"name" : "Ö÷Òª²ÆÎñÖ¸±ê"
-		},
-		"zcfzb" : {
-			"id" : "zcfzb",
-			"name" : "×Ê²ú¸ºÕ®±í"
-		},
-		"lrb" : {
-			"id" : "lrb",
-			"name" : "ÀûÈó±í"
-		},
-		"xjllb" : {
-			"id" : "xjllb",
-			"name" : "ÏÖ½ğÁ÷Á¿±í"
-		}
-	};
 
-	ReportType = {
-		"year" : {
-			"id" : "year",
-			"name" : "Äê±¨"
-		},
-		"season" : {
-			"id" : "season",
-			"name" : "¼¾±¨"
-		},
-		"report" : {
-			"id" : "report",
-			"name" : "±¨¸æÆÚ"
-		}
-	};
 </script>
 </head>
 <body>
-	<div>
+	<div class="container">
 
 		<h5></h5>
+		<div class="stock-search">
+			<input type="text">
+			<ul class="search-result">
+				<li>
+					<ul class="result-item">
+						<li></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
 		<div class="stock-filter">
 		<select class="finance-type"></select>
 		 <select class="report-type"></select>
@@ -111,7 +92,7 @@ select {
 			'<option id="'+ReportType.report.id+'">' + ReportType.report.name
 					+ '</option>');
 
-	//zycwzb(Ö÷Òª²ÆÎñÖ¸±ê), zcfzb(×Ê²ú¸ºÕ®±í), lrb(ÀûÈó±í), xjllb(ÏÖ½ğÁ÷Á¿±í)
+	//zycwzb(ä¸»è¦è´¢åŠ¡æŒ‡æ ‡), zcfzb(èµ„äº§è´Ÿå€ºè¡¨), lrb(åˆ©æ¶¦è¡¨), xjllb(ç°é‡‘æµé‡è¡¨)
 	
     reportType = ReportType.year;
     financeType = FinanceType.zcfzb;
