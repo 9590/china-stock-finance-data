@@ -31,6 +31,6 @@ libraryDependencies += "commons-io" % "commons-io" % "2.4"
 
 libraryDependencies += "io.spray" % "spray-json_2.11" % "1.3.2"
 
-
+libraryDependencies += "com.typesafe" % "config" % "1.3.0"
 
 
