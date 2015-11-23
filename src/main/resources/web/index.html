@@ -6,8 +6,10 @@
 <script type="text/javascript" src="jquery-1.11.2.min.js"></script>
 <script type="text/javascript" src="data.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
-<link href="bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" />
-<link href="bootstrap/css/bootstrap.theme.css" rel="stylesheet" type="text/css" />
+<link href="bootstrap/css/bootstrap.css" rel="stylesheet"
+	type="text/css" />
+<link href="bootstrap/css/bootstrap.theme.css" rel="stylesheet"
+	type="text/css" />
 <style>
 th, td {
 	text-align: left;
@@ -15,60 +17,82 @@ th, td {
 }
 
 h5 {
-	display: inline-block;
+	
 }
 
 select {
 	display: inline-block;
 	margin-left: 30px;
 }
-.stock-filter{
+
+.stock-filter {
 	display: inline-block;
 }
-.container{
-	margin:10px;
+
+.container {
+	margin: 10px;
 }
-.stock-search{
+
+.stock-search {
+	display: inline-block;
+	position:relative;
+	 
+}
+.search-result{
+	position:absolute;
+	padding:5px;
+	z-index:100;
+	background-color:white;
 	display:none;
 }
+.search-result td{
+	cursor:pointer;
+}
+.finance-data{
+	position:relative;
+}
+
 </style>
 <script>
-
+	
 </script>
 </head>
 <body>
 	<div class="container">
 
 		<h5></h5>
-		<div class="stock-search">
-			<input type="text">
-			<ul class="search-result">
-				<li>
-					<ul class="result-item">
-						<li></li>
-					</ul>
-				</li>
-			</ul>
+		<div class="stock-filters">
+			<form role="form">
+				<div class="stock-search">
+
+					<label>股票搜索</label> <input class="search-input" type="text"
+						placeholder="代码/拼音">
+
+					<div class="search-result"></div>
+				</div>
+				<div class="stock-filter">
+					<select class="finance-type"></select> 
+					<select class="report-type"></select>
+				</div>
+			</form>
 		</div>
-		<div class="stock-filter">
-		<select class="finance-type"></select>
-		 <select class="report-type"></select>
+		<div class="finance-data">
+			<table class="table">
+				<thead>
+					<tr>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
 		</div>
-		<table class="table">
-			<thead>
-				<tr>
-				</tr>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
 	</div>
 
 </body>
 
 <script type="text/javascript">
 	$("h5").text(symbol);
-	
+
 	$("select.finance-type").append(
 			'<option id="'+FinanceType.zycwzb.id+'">' + FinanceType.zycwzb.name
 					+ '</option>');
@@ -93,12 +117,12 @@ select {
 					+ '</option>');
 
 	//zycwzb(主要财务指标), zcfzb(资产负债表), lrb(利润表), xjllb(现金流量表)
-	
-    reportType = ReportType.year;
-    financeType = FinanceType.zcfzb;
+
+	reportType = ReportType.year;
+	financeType = FinanceType.zcfzb;
 	symbol = "600000";
-	
-	function loadStockFinanceData(){
+
+	function loadStockFinanceData() {
 		$.ajax({
 			"url" : symbol + "/" + financeType.id + "/" + reportType.id,
 			dataType : "json",
@@ -107,14 +131,13 @@ select {
 			}
 		});
 	}
-	
+
 	loadStockFinanceData();
-	
 </script>
 <script>
 	function fillStockData(data) {
 		var headRowData = data[0];
-		var firstRow = $("table thead tr");
+		var firstRow = $(".finance-data table thead tr");
 		firstRow.empty();
 		for (var i = 0; i < headRowData.length; i++) {
 			var th = $("<th nowrap='nowrap'></th>");
@@ -122,7 +145,7 @@ select {
 			firstRow.append(th);
 		}
 
-		var tbody = $("table tbody");
+		var tbody = $(".finance-data table tbody");
 		tbody.empty();
 		for (var i = 1; i < data.length; i++) {
 			var row = $("<tr></tr>")
@@ -135,15 +158,66 @@ select {
 			tbody.append(row);
 		}
 	}
-	function bindEvent(){
-		$(".stock-filter").on("change", "select.finance-type, select.report-type", function(){
-			var financeTypeId = $("select.finance-type").find("option:selected").attr("id");
-			var reportTypeId = $("select.report-type").find("option:selected").attr("id");
-			reportType = ReportType[reportTypeId];
-			financeType = FinanceType[financeTypeId];
+	function bindEvent() {
+		$(".stock-filter").on(
+				"change",
+				"select.finance-type, select.report-type",
+				function() {
+					var financeTypeId = $("select.finance-type").find(
+							"option:selected").attr("id");
+					var reportTypeId = $("select.report-type").find(
+							"option:selected").attr("id");
+					reportType = ReportType[reportTypeId];
+					financeType = FinanceType[financeTypeId];
+					loadStockFinanceData();
+				});
+		$(".stock-search").on("keyup", ".search-input",  function(e){
+			var input = $(this).val();
+			searchStock(input);
+		});
+		
+		$(".stock-filters").on("click", "table tr",  function(e){
+			var div = $(".search-result");
+			div.empty();
+			div.hide();
+			symbol = $(this).find("td:eq(0)").text();
 			loadStockFinanceData();
 		});
-		 
+	}
+	function searchStock(word){
+		$.ajax({
+			"url" : "stocks?word="+word,
+			dataType : "json",
+			success : function(data) {
+				createSearchResultTable(data);
+			}
+		});
+	}
+	function createSearchResultTable(data){
+		var div = $(".search-result");
+		div.empty();
+		var table = $("<table></table>");
+		for(var i=0; i<data.length; i++){
+			var tr = $("<tr></tr>");
+			var symbolTd = $("<td></td>");
+			symbolTd.text(data[i].symbol);
+			
+			var spellTd = $("<td></td>");
+			spellTd.text(data[i].spell);
+			
+			var nameTd = $("<td></td>");
+			nameTd.text(data[i].name);
+			
+			tr.append(symbolTd);
+			tr.append(spellTd);
+			tr.append(nameTd);
+			table.append(tr);
+		}
+		div.append(table);
+		if(data.length)
+			div.show();
+		else
+			div.hide();
 	}
 	bindEvent();
 </script>

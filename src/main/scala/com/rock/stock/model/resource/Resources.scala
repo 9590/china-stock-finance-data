@@ -60,7 +60,7 @@ object Resource {
 
   def getRealFilePath(path: String) = {
     var rootPath = classOf[Resource].getResource("/").getPath
-    rootPath = "E:/program_data/workspace/github_rep/china-stock-finance-data/src/main/resources/"
+//    rootPath = "E:/program_data/workspace/github_rep/china-stock-finance-data/src/main/resources/"
     path match {
       case path if path == "/" || path.startsWith("/?") => rootPath + "web/index.html"
       case _ => rootPath + "web" + path
