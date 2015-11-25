@@ -36,14 +36,12 @@ class RichString(str: String) {
   def incPercentTo(str2:String) = {
     val otherNum = new RichString(str2).toNum
     val res = for(n <- num; otherN <- otherNum) yield {
-      if(otherN == 0) new RichString(null) else new RichString((n - otherN)/otherN + "")
-    }
-    res.map { richString => richString.toPercent }.getOrElse("--")
+      if(otherN == 0) "--" else (n - otherN)/otherN + ""
+    } 
+    res.getOrElse("--")
   }
 
-  def isNegativeNum = {
-    num.getOrElse[Double](-1) < 0
-  }
+   
   def toNum = num
 }
 object RichString extends App {

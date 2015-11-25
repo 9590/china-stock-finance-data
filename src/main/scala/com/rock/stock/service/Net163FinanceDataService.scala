@@ -21,13 +21,12 @@ import scala.collection.mutable.ArrayBuffer
  * @author rock
  */
 class Net163FinanceDataService(resource: StockFinanceResource) extends FinanceDataService(resource) {
- 
-  val exportFile = "D:/a/f.html"
-   
+  
   override def getFinanceData = {
     val url = s"http://quotes.money.163.com/service/${resource.financeType}_${resource.symbol}.html?type=${resource.reportType}" //year season report
     val csv = Http(url).option(HttpOptions.connTimeout(111000)).option(HttpOptions.readTimeout(511000)).asBytes
-    CSVUtil.readCSV(new StringReader(new String(csv.body, "gb2312")))
+    val data = CSVUtil.readCSV(new StringReader(new String(csv.body, "gb2312")))
+    data.filter { row => !row.isEmpty && !row.head.trim().isEmpty()}
   }
 
 }

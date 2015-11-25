@@ -52,6 +52,12 @@ select {
 	position:relative;
 }
 
+.positive{
+	color:red;
+} 
+.negative{
+	color: green;
+}
 </style>
 <script>
 	
@@ -60,12 +66,12 @@ select {
 <body>
 	<div class="container">
 
-		<h5></h5>
+		<h5 style="padding-left:8px;"></h5>
 		<div class="stock-filters">
 			<form role="form">
 				<div class="stock-search">
 
-					<label>股票搜索</label> <input class="search-input" type="text"
+					<label style="padding-left:8px; padding-right: 5px;">股票搜索</label> <input class="search-input" type="text"
 						placeholder="代码/拼音">
 
 					<div class="search-result"></div>
@@ -91,7 +97,15 @@ select {
 </body>
 
 <script type="text/javascript">
-	$("h5").text(symbol);
+	reportType = ReportType.year;
+	financeType = FinanceType.zycwzb;
+	
+	stock = {
+		"symbol" : "600660",
+		"name" : "福耀玻璃"	
+	};
+
+	$("h5").text(stock.name);
 
 	$("select.finance-type").append(
 			'<option id="'+FinanceType.zycwzb.id+'">' + FinanceType.zycwzb.name
@@ -118,16 +132,14 @@ select {
 
 	//zycwzb(主要财务指标), zcfzb(资产负债表), lrb(利润表), xjllb(现金流量表)
 
-	reportType = ReportType.year;
-	financeType = FinanceType.zcfzb;
-	symbol = "600000";
-
+	
 	function loadStockFinanceData() {
 		$.ajax({
-			"url" : symbol + "/" + financeType.id + "/" + reportType.id,
+			"url" : stock.symbol + "/" + financeType.id + "/" + reportType.id,
 			dataType : "json",
 			success : function(data) {
 				fillStockData(data);
+				$("h5").text(stock.name);
 			}
 		});
 	}
@@ -136,7 +148,7 @@ select {
 </script>
 <script>
 	function fillStockData(data) {
-		var headRowData = data[0];
+		var headRowData = data.head;
 		var firstRow = $(".finance-data table thead tr");
 		firstRow.empty();
 		for (var i = 0; i < headRowData.length; i++) {
@@ -147,12 +159,28 @@ select {
 
 		var tbody = $(".finance-data table tbody");
 		tbody.empty();
-		for (var i = 1; i < data.length; i++) {
+		var bodyData = data.body;
+		for (var i = 1; i < bodyData.length; i++) {
 			var row = $("<tr></tr>")
-			var cols = data[i];
+			var cols = bodyData[i].data;
+			
+			var td = $("<td nowrap='nowrap'></td>");
+			td.text(bodyData[i].name);
+			row.append(td);
+			
 			for (var j = 0; j < cols.length; j++) {
 				var td = $("<td nowrap='nowrap'></td>");
-				td.text(cols[j]);
+				var text = cols[j].value;
+				if(text != '--' && text != '0'){
+					text += " (" + cols[j].incPercent+ ")"
+				}
+				td.text(text);
+				if(cols[j].num > 0){
+					td.addClass("positive");
+				}
+				else if(cols[j].num < 0){
+					td.addClass("negative");
+				}
 				row.append(td);
 			}
 			tbody.append(row);
@@ -180,7 +208,8 @@ select {
 			var div = $(".search-result");
 			div.empty();
 			div.hide();
-			symbol = $(this).find("td:eq(0)").text();
+			stock.symbol = $(this).find("td:eq(0)").text();
+			stock.name = $(this).find("td:eq(2)").text();
 			loadStockFinanceData();
 		});
 	}
